@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 
 class JdHomeTabs extends StatefulWidget {
-  const JdHomeTabs({
-    Key? key,
-    required this.tabs,
-    required this.onTapCategory,
-    required this.preSelectedWidgetGetter,
-    required this.curSelectedWidgetGetter,
-  }) : super(key: key);
+  const JdHomeTabs(
+      {Key? key,
+      required this.tabs,
+      required this.onSelectCatetory,
+      required this.preSelectedWidgetGetter,
+      required this.curSelectedWidgetGetter,
+      this.selectedIndex = 0})
+      : super(key: key);
 
   final List<Widget> tabs;
-  final VoidCallback onTapCategory;
+  final Function(int index) onSelectCatetory;
   final Widget Function(int index) preSelectedWidgetGetter;
   final Widget Function(int index) curSelectedWidgetGetter;
+  final int selectedIndex;
 
   @override
   State<JdHomeTabs> createState() => _JdHomeTabsState();
@@ -22,22 +24,37 @@ class _JdHomeTabsState extends State<JdHomeTabs> with TickerProviderStateMixin {
   late TabController _tabbController;
 
   int? _preSelectedIdx = null;
-  int _curSelectedIdx = 0;
+  late int _curSelectedIdx = widget.selectedIndex;
 
   @override
   void initState() {
     _tabbController = TabController(length: widget.tabs.length, vsync: this);
     super.initState();
+    debugPrint('JdHomeTabs initState');
+  }
+
+  @override
+  void activate() {
+    debugPrint('JdHomeTabs activate');
+    super.activate();
+  }
+
+  @override
+  void deactivate() {
+    debugPrint('JdHomeTabs deactivate');
+    super.deactivate();
   }
 
   @override
   void dispose() {
+    debugPrint('JdHomeTabs dispose');
     _tabbController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('JdHomeTabs build');
     return Container(
         height: 40.0,
         color: Colors.red,
@@ -57,6 +74,7 @@ class _JdHomeTabsState extends State<JdHomeTabs> with TickerProviderStateMixin {
                       _preSelectedIdx = _curSelectedIdx;
                       _curSelectedIdx = idx;
                     });
+                    widget.onSelectCatetory(idx);
                   },
                   child: _buildItem(idx),
                 );
@@ -83,6 +101,7 @@ class _JdHomeTabsState extends State<JdHomeTabs> with TickerProviderStateMixin {
     Widget item;
     if (index == _preSelectedIdx) {
       item = widget.preSelectedWidgetGetter(index);
+      _preSelectedIdx = null;
     } else if (index == _curSelectedIdx) {
       item = widget.curSelectedWidgetGetter(index);
     } else {

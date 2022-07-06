@@ -41,6 +41,7 @@ class JdHomeSwiperTabs extends StatelessWidget {
       'PLUS会员'
     ].map((e) => JdHomeSwiperTabsItem(img: '', name: e)).toList(),
   );
+
 }
 
 @immutable

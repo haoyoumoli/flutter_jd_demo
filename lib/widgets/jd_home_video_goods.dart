@@ -1,9 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:jd_demos/demo_common.dart';
 import 'package:video_player/video_player.dart';
-import 'package:jd_demos/tools/extenstion.dart';
 
 class JdHomeVideoGoodsWidget extends StatefulWidget {
   final ScrollEndNotification? scrollEndNotification;
@@ -21,10 +19,10 @@ class _JdHomeVideoGoodsWidgetState extends State<JdHomeVideoGoodsWidget>
   late VideoPlayerController _videoPlayController;
 
   bool _videoShouldPlay = false;
+  bool _disposed = false;
 
   @override
   void initState() {
-    print('initState');
     super.initState();
 
     _videoPlayController = VideoPlayerController.network(VideoUrls.bee)
@@ -32,6 +30,7 @@ class _JdHomeVideoGoodsWidgetState extends State<JdHomeVideoGoodsWidget>
         setState(() {});
       });
     _videoPlayController.setLooping(true);
+    debugPrint('JdHomeVideoGoodsWidget initState');
   }
 
   @override
@@ -49,8 +48,8 @@ class _JdHomeVideoGoodsWidgetState extends State<JdHomeVideoGoodsWidget>
   @override
   void dispose() {
     super.dispose();
-     print('dispose');
     _videoPlayController.dispose();
+    _disposed = true;
   }
 
   void _hanldeShouldPlayVideo(BuildContext context) {
@@ -62,15 +61,15 @@ class _JdHomeVideoGoodsWidgetState extends State<JdHomeVideoGoodsWidget>
     final size = renderObject.size;
     final screenMiddleY = MediaQuery.of(context).size.height * 0.5;
     if (offset.dy < screenMiddleY && offset.dy + size.height > screenMiddleY) {
-      debugPrint('显示在屏幕中间');
       _videoShouldPlay = true;
     } else {
       _videoShouldPlay = false;
     }
 
-    Future.delayed(Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_disposed) return;
       if (_videoShouldPlay) {
-        debugPrint('播放${_videoPlayController.value.isPlaying}');
+        //  debugPrint('播放${_videoPlayController.value.isPlaying}');
         _videoPlayController.play();
       } else {
         _videoPlayController.pause();
@@ -80,7 +79,7 @@ class _JdHomeVideoGoodsWidgetState extends State<JdHomeVideoGoodsWidget>
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('${context.findRenderObject()?.attached}');
+    //   debugPrint('${context.findRenderObject()?.attached}');
     _hanldeShouldPlayVideo(context);
     return ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(5.0)),
