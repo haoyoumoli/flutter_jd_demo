@@ -117,7 +117,7 @@ class _JdHomePageState extends State<JdHomePage>
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    // _scrollController.dispose();
     _animationController.dispose();
     _animStreamController.close();
     super.dispose();
