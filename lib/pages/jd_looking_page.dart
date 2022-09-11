@@ -13,7 +13,7 @@ class _JDLookingPageState extends State<JDLookingPage> {
     print("<逛>被构建了");
     return const Scaffold(
       body: Center(
-        child: Text('新品'),
+        child: Text('逛'),
       ),
     );
   }
