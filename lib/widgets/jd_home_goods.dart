@@ -13,7 +13,6 @@ class JdHomeNormalGoodsWidget extends StatelessWidget {
         color: Colors.white,
         child: Stack(children: [
           //背景色
-
           Column(
             children: [
               AspectRatio(
@@ -140,7 +139,7 @@ class JdHomeNormalGoodsWidget extends StatelessWidget {
                 '新品',
                 style: TextStyle(color: Colors.green),
               ),
-            )
+            ),
           ],
         ));
   }

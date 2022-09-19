@@ -1,5 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:jd_demos/models/new_model.dart';
+import 'package:provider/provider.dart';
 import 'package:jd_demos/tools/globalkey_manager.dart';
 
 class FollowStreamButton extends StatelessWidget {
@@ -58,7 +62,7 @@ class FllowButton extends StatelessWidget {
   Widget build(BuildContext context) {
     const padding = EdgeInsets.symmetric(horizontal: 10, vertical: 5);
     final boxDec = BoxDecoration(
-        color: Colors.grey.shade500,
+        color: Colors.grey.shade300,
         borderRadius: const BorderRadius.all(Radius.circular(15.0)));
     Widget child;
     if (isFllowing) {
@@ -91,36 +95,6 @@ class FllowButton extends StatelessWidget {
   }
 }
 
-class JDNewTopBar extends StatelessWidget {
-  const JDNewTopBar({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.green,
-      child: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Flex(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          direction: Axis.horizontal,
-          children: [
-            FllowButton(isFllowing: false, onTap: () {}),
-            const JDNewTopMidCategoriesButtons(),
-            IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.more,
-                  color: Colors.white,
-                ))
-          ],
-        ),
-      )),
-    );
-  }
-}
-
 class _Cursor extends StatelessWidget {
   final double width;
   final double height;
@@ -142,7 +116,15 @@ class _Cursor extends StatelessWidget {
 }
 
 class JDNewTopMidCategoriesButtons extends StatefulWidget {
-  const JDNewTopMidCategoriesButtons({Key? key}) : super(key: key);
+  final List<String> titles;
+  final void Function(int) onTap;
+  final int startIdx;
+  const JDNewTopMidCategoriesButtons(
+      {Key? key,
+      required this.titles,
+      required this.onTap,
+      required this.startIdx})
+      : super(key: key);
 
   @override
   State<JDNewTopMidCategoriesButtons> createState() =>
@@ -158,28 +140,29 @@ class _JDNewTopMidCategoriesButtonsState
   @override
   void initState() {
     super.initState();
-
+    _currentIdx = widget.startIdx;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _updateCursorPosition(0);
+      _updateCursorPosition(_currentIdx);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> titles = ['DIOR', '!!!精选!!!', '!趋势!'];
-    List<Widget> buttons = [];
-    for (int i = 0; i < titles.length; i++) {
-      GlobalKey key = _btnKeys.requestAndCache(i);
-
-      buttons.add(TextButton(
-          key: key,
-          onPressed: () {
-            _updateCursorPosition(i);
-          },
-          child: Text(titles[i],
-              style: TextStyle(
-                  color: i == _currentIdx ? Colors.black : Colors.white))));
+    List<Widget> buttons = createButtons();
+    const margin = 4.0;
+    double cursorX = 0;
+    double cursorY = 0;
+    double cursorWidth = 0;
+    double cursorHeight = 0;
+    if (_curOffset != null) {
+      cursorX = _curOffset!.dx + margin;
+      cursorY = _curOffset!.dy + margin;
     }
+    if (_cursorSize != null) {
+      cursorWidth = _cursorSize!.width - 2 * margin;
+      cursorHeight = _cursorSize!.height - 2 * margin;
+    }
+
     return Container(
       height: 40,
       decoration: const BoxDecoration(
@@ -190,11 +173,11 @@ class _JDNewTopMidCategoriesButtonsState
         children: [
           AnimatedPositioned(
               duration: const Duration(milliseconds: 200),
-              top: _curOffset?.dy,
-              left: _curOffset?.dx,
+              top: cursorY,
+              left: cursorX,
               child: _Cursor(
-                width: _cursorSize?.width ?? 0,
-                height: _cursorSize?.height ?? 0,
+                width: cursorWidth,
+                height: cursorHeight,
               )),
           Row(
             children: buttons,
@@ -215,9 +198,85 @@ class _JDNewTopMidCategoriesButtonsState
       _cursorSize = ctx?.size;
       var parentData = ctx?.findRenderObject()?.parentData as FlexParentData?;
       _curOffset = parentData?.offset;
-      debugPrint(_currentIdx.toString());
-      debugPrint(_cursorSize.toString());
-      debugPrint(_curOffset.toString());
     });
+  }
+
+  List<Widget> createButtons() {
+    List<Widget> buttons = [];
+    List<String> titles = widget.titles;
+    for (int i = 0; i < titles.length; i++) {
+      GlobalKey key = _btnKeys.requestAndCache(i);
+
+      buttons.add(TextButton(
+          key: key,
+          onPressed: () {
+            _updateCursorPosition(i);
+            widget.onTap(i);
+          },
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 70),
+            child: Text(titles[i],
+                maxLines: 1,
+                textAlign: TextAlign.center,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    color: i == _currentIdx ? Colors.black : Colors.white)),
+          )));
+    }
+    return buttons;
+  }
+}
+
+class JDNewTopBar extends StatelessWidget {
+  final double bgOpacity;
+  final void Function(int) onTapMiddleBtns;
+  final void Function() onTapMore;
+  final List<String> middleTitles;
+  const JDNewTopBar(
+      {Key? key,
+      required this.middleTitles,
+      required this.bgOpacity,
+      required this.onTapMore,
+      required this.onTapMiddleBtns})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.green.withOpacity(bgOpacity),
+      child: SafeArea(
+          child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Flex(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          direction: Axis.horizontal,
+          children: [
+            Selector<NewGoodsModel, bool>(
+                builder: (context, isFllowing, child) {
+                  return FllowButton(
+                      isFllowing: isFllowing,
+                      onTap: () {
+                        final model = context.read<NewGoodsModel>();
+                        model.isFollowing = !model.isFollowing;
+                      });
+                },
+                selector: (p0, p1) => p1.isFollowing),
+            JDNewTopMidCategoriesButtons(
+              titles: middleTitles,
+              startIdx: 0,
+              onTap: onTapMiddleBtns,
+            ),
+            IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.more,
+                  color: Colors.grey.shade300,
+                ))
+          ],
+        ),
+      )),
+    );
   }
 }

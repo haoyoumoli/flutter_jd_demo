@@ -4,6 +4,7 @@ import 'package:jd_demos/pages/jd_home_page.dart';
 import 'package:jd_demos/pages/jd_looking_page.dart';
 import 'package:jd_demos/pages/jd_mine_page.dart';
 import 'package:jd_demos/pages/jd_new_page.dart';
+import 'package:jd_demos/tools/lazy_build_offstage.dart';
 
 class JDRootPage extends StatefulWidget {
   const JDRootPage({Key? key}) : super(key: key);
@@ -16,11 +17,11 @@ class _JDRootPageState extends State<JDRootPage> {
   var _selectedIdx = 0;
 
   ///页面懒加载
-  Widget? _homePage = null;
-  Widget? _newPage = null;
-  Widget? _lookingPage = null;
-  Widget? _cartPage = null;
-  Widget? _minePage = null;
+  Widget? _homePage;
+  Widget? _newPage;
+  Widget? _lookingPage;
+  Widget? _cartPage;
+  Widget? _minePage;
 
   @override
   Widget build(BuildContext context) {
@@ -51,51 +52,51 @@ class _JDRootPageState extends State<JDRootPage> {
 
   List<Widget> _getPages() {
     return [
-      _lazyLoadPage(
-          childLoader: () {
+      LazyLoadOffstage(
+          lazyLoader: () {
             _homePage ??= const JdHomePage();
             return _homePage;
           },
-          index: 0,
-          holdedChild: _homePage),
-      _lazyLoadPage(
-          childLoader: () {
+          needDisplayGetter: () {
+            return 0 == _selectedIdx;
+          },
+          loadedChild: _homePage),
+      LazyLoadOffstage(
+          lazyLoader: () {
             _newPage ??= const JDNewPage();
             return _newPage;
           },
-          index: 1,
-          holdedChild: _newPage),
-      _lazyLoadPage(
-          childLoader: () {
+          needDisplayGetter: () {
+            return 1 == _selectedIdx;
+          },
+          loadedChild: _newPage),
+      LazyLoadOffstage(
+          lazyLoader: () {
             _lookingPage ??= const JDLookingPage();
             return _lookingPage;
           },
-          index: 2,
-          holdedChild: _lookingPage),
-      _lazyLoadPage(
-          childLoader: () {
+          needDisplayGetter: () {
+            return 2 == _selectedIdx;
+          },
+          loadedChild: _lookingPage),
+      LazyLoadOffstage(
+          lazyLoader: () {
             _cartPage ??= const JDCartPage();
             return _cartPage;
           },
-          index: 3,
-          holdedChild: _cartPage),
-      _lazyLoadPage(
-          childLoader: () {
+          needDisplayGetter: () {
+            return 3 == _selectedIdx;
+          },
+          loadedChild: _cartPage),
+      LazyLoadOffstage(
+          lazyLoader: () {
             _minePage ??= const JDMinePage();
             return _minePage;
           },
-          index: 4,
-          holdedChild: _minePage),
+          needDisplayGetter: () {
+            return 4 == _selectedIdx;
+          },
+          loadedChild: _minePage),
     ];
-  }
-
-  Widget _lazyLoadPage(
-      {required Widget? Function() childLoader,
-      required int index,
-      required Widget? holdedChild}) {
-    bool display = _selectedIdx == index;
-    return Offstage(
-        offstage: !display,
-        child: (holdedChild == null && display) ? childLoader() : holdedChild);
   }
 }
