@@ -158,7 +158,8 @@ class _JDCarefullyChosePageState extends State<JDCarefullyChosePage>
             if (idx % 2 == 1) {
               return JDNewGoods2Widget(
                 imgUrl: ImgUrls.girl,
-                goodsName: '梁红玉我的媳妇亲吻抚摸插屄舌吻扛起她的双腿',
+                goodsName:
+                    '新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活',
                 newAmountTxt: '8件上新',
                 followAmountTxt: '2.5万人关注',
               );
@@ -167,8 +168,8 @@ class _JDCarefullyChosePageState extends State<JDCarefullyChosePage>
               category: '新生活',
               imgUrl: ImgUrls.girl,
               name:
-                  '梁红玉我的媳妇亲吻抚摸插屄舌吻扛起她的双腿梁红玉我的媳妇亲吻抚摸插屄舌吻扛起她的双腿梁红玉我的媳妇亲吻抚摸插屄舌吻扛起她的双腿',
-              tags: ['梁红玉', '梁红玉', '梁红玉', '梁红玉'],
+                  '新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活新生活',
+              tags: ['新生活', '新生活', '新生活', '新生活'],
             );
           }));
     }

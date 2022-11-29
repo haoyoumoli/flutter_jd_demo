@@ -57,7 +57,7 @@ class _JdHomeTabsState extends State<JdHomeTabs> with TickerProviderStateMixin {
     debugPrint('JdHomeTabs build');
     return Container(
         height: 40.0,
-        color: Colors.white,
+        color: Colors.red,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
