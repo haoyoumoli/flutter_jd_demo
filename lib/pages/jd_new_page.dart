@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:jd_demos/models/new_model.dart';
+import 'package:jd_demos/pages/jd_new_trend_page.dart';
 import 'package:jd_demos/tools/globalkey_manager.dart';
 import 'package:jd_demos/widgets/jd_new_follow_btn.dart';
 import 'package:provider/provider.dart';
@@ -75,9 +76,7 @@ class _JDNewPageState extends State<JDNewPage> {
                   ),
                   Offstage(
                     offstage: !(_selectedIdx == 2),
-                    child: Container(
-                      color: Colors.green,
-                    ),
+                    child: const JDNewTrendPage(),
                   )
                 ],
               );

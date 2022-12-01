@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:jd_demos/demo_common.dart';
 import 'package:jd_demos/tools/globalkey_manager.dart';
@@ -27,6 +26,7 @@ class _JDCarefullyChosePageState extends State<JDCarefullyChosePage>
   final GlobalKeyManager _km = GlobalKeyManager();
 
   var _tabsTop = 0.0;
+  final _topSwiperHeight = 300.0;
   StateSetter? _tabStateSetter;
   final ScrollController _scrollController = ScrollController();
 
@@ -71,23 +71,24 @@ class _JDCarefullyChosePageState extends State<JDCarefullyChosePage>
   }
 
   void _updateTabsLocation() {
+    //上面这个查找操作非常耗时,会引起分类导航随动延时,不跟手
     final key = _km.requestAndCache('tab-places-holder');
-    final renderObject =
-        key.currentContext?.findRenderObject() as RenderSliverToBoxAdapter;
-    final parentData = renderObject.parentData as SliverPhysicalParentData?;
-    final y = (parentData?.paintOffset.dy ?? 0.0 - _scrollController.offset);
+    // final renderObject =
+    //     key.currentContext?.findRenderObject() as RenderSliverToBoxAdapter;
+    // final parentData = renderObject.parentData as SliverPhysicalParentData?;
+    // final y = (parentData?.paintOffset.dy ?? 0.0 - _scrollController.offset);
+    final y = _topSwiperHeight - _scrollController.offset;
     _tabsTop = max(widget.topBarHeight, y);
     if (_tabStateSetter != null) {
       _tabStateSetter!(() {});
     }
-    ;
   }
 
   Widget _buildSwiper() {
     return SliverToBoxAdapter(
         child: Container(
       color: Colors.white,
-      height: 300,
+      height: _topSwiperHeight,
       child: Swiper(
         pagination: JDNewSwiperPagination(),
         itemCount: 5,
